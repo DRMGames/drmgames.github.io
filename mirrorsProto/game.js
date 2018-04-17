@@ -18,6 +18,23 @@ var M = {
 };
 
 M.levels = [`
+       wwwwwwwww
+       wwwww   w
+       wwwww www
+MMMMMMMwwwwwwwww
+MMMMMMMwwwwwwwww
+       ww       
+       ww       
+   t   ww   t   
+       ww       
+       ww       
+       ww       
+       ww       
+       ww       
+       ww       
+       ww       
+    G  ww  g    
+`,`
        ww       
        ww       
        ww       
@@ -132,8 +149,8 @@ var Terrain = {
         id: 'c',
         color: 0xFFFFFF,
     },
-    MIRROR: {
-        id: 'm',
+    PMIRROR: {
+        id: 'M',
         color: 0xDDDDDD,
     },
     TELEPORT: {
@@ -155,6 +172,7 @@ var Terrain = {
 };
 
 M.player = {x: 1, y: 1};
+M.pghost = {active: false, x: 1, y: 1};
 M.target = {x: 14, y: 1};
 M.pdone = false;
 M.tdone = false;
@@ -175,13 +193,22 @@ M.movePlayer = function(x, y, p) {
         p.y = ny;
         // Check if player and target are at their goals
         if(p === M.target) {
-            if (PS.color(nx, ny) === Terrain.TGOAL.color) {//TODO FIx this use bitmap
+            if(PS.color(nx, ny) === Terrain.PMIRROR.color) {
+                M.pghost.x = nx;
+                M.pghost.y = ny;
+                M.pghost.active = true;
+                console.log("Pghost active");
+            } else {
+                M.pghost.active = false;
+                console.log("Pghost inactive");
+            }
+            if (PS.color(nx, ny) === Terrain.TGOAL.color) {
                 M.tdone = true;
             } else {
                 M.tdone = false;
             }
         } else if(p === M.player) {
-            if (PS.color(nx, ny) === Terrain.PGOAL.color) {//TODO FIx this use bitmap
+            if (PS.color(nx, ny) === Terrain.PGOAL.color) {
                 M.pdone = true;
             } else {
                 M.pdone = false;
@@ -267,6 +294,11 @@ var finalize = function( system, options ) {
         // PS.borderFade(M.player.x, M.player.y, 40);
         PS.color(M.player.x, M.player.y, 0x333333);
         PS.color(M.target.x, M.target.y, 0x777777);
+
+        if(M.pghost.active) {
+            console.log("pghost drawn");
+            PS.color(M.pghost.x, M.pghost.y, Terrain.TELEPORT.color);
+        }
         // PS.radius(M.player.x, M.player.y, 50);
 
     });
