@@ -130,3 +130,11 @@ a {
     top: 66%;
     background-image: url('../mirrors/cover.png');
 }
+
+.box[data-button="game10"] {
+    width: 6%;
+    height: 70%;
+    left: 47%;
+    top: 16%;
+    background-image: url('../withermod/cover.png');
+}
