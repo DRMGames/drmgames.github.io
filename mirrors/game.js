@@ -48,6 +48,23 @@ M.levels = [`
        ww       
     G  ww  g    
 `,`
+       ww       
+       ww       
+       ww       
+       ww       
+       ww       
+       ww       
+       ww       
+       ww       
+       ww       
+    G  ww       
+       wwwwwwwww
+       ww  g    
+       ww       
+       ww       
+       ww       
+    S  ww  s    
+`,`
 wwwwgwwwwwwGwwww
 wwww wwwwww wwww
 wwww wwwwww wwww
@@ -170,23 +187,6 @@ www    wwwww
        ww
       Swws
 `,`
-wwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwww
-`,`
 wwwSwwwwwwwwswww
 wwwcwwwwwwwwcwww
 wwwcwwwwwwwwcwww
@@ -203,6 +203,40 @@ wwwcwwwwwwwwcwww
 wwwcwwwwwwwwcwww
 wwwGwwwwwwwwgwww
 wwwwwwwwwwwwwwww
+`,`
+   S        s   
+www cccccwwccc w
+wwwcwwwwwwwcccww
+wwwcwwwwww ccc w
+wwwcwwwwww ccc w
+wwwcwwwwww ccc w
+wtcccc wwwtwcw w
+wwwcwwwwwwwwww w
+wwwcwwwwwwwwcw w
+wwwcwwwwwwwwcw w
+wwwcwwwwwwwwcw w
+w  cwwwwwwwwcwtw
+wgwcwwwwwwwwcwGw
+wwwcwwwwwwwwcwww
+wwwcwwwwwwwwcwww
+wwwGwwwwwwwwgwww
+`,`
+wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww
 `];
 
 M.level = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []];
@@ -214,7 +248,7 @@ var Terrain = {
     },
     ICE: {
         id: 'c',
-        color: 0xFFFFFF,
+        color: 0x00FFFF,
     },
     MIRROR: {
         id: 'm',
@@ -222,7 +256,7 @@ var Terrain = {
     },
     TELEPORT: {
         id: 't',
-        color: 0x00FFFF,
+        color: 0xFF00FF,
     },
     TGOAL: {
         id: 'g',
@@ -275,32 +309,26 @@ M.movePlayer = function(x, y, p, skipMirror) {
         if(p === M.target) {
             if (PS.color(nx, ny) === Terrain.TGOAL.color) {//TODO FIx this use bitmap
                 M.tdone = true;
+                setTimeout(function () {
+                    if(M.tdone && !M.pdone) {
+                        PS.audioPlay("fx_zurp");
+                    }
+                }, 800);
             } else {
                 M.tdone = false;
             }
         } else if(p === M.player) {
             if (PS.color(nx, ny) === Terrain.PGOAL.color) {//TODO FIx this use bitmap
                 M.pdone = true;
+                setTimeout(function () {
+                    if(M.pdone && !M.tdone) {
+                        PS.audioPlay("fx_zurp");
+                    }
+                }, 800);
+
             } else {
                 M.pdone = false;
             }
-        }
-
-
-        // If both are at goal, move to next lvl
-        if(M.tdone && M.pdone) {
-            PS.audioPlay("fx_coin2");
-
-            if ( db && PS.dbValid( db ) ) {
-                PS.dbEvent( db, "Level complete", M.currentLevel ); // val can be anything
-            }
-
-            if ( !M.levels[M.currentLevel + 1] && db && PS.dbValid( db ) ) {
-                PS.dbEvent( db, "gameover", true );
-                PS.dbSend( db, "bmoriarty", { discard : true } );
-                db = null;
-            }
-            M.loadLevel(++M.currentLevel);
         }
 
         if (PS.color(nx, ny) === Terrain.TELEPORT.color) {
@@ -312,8 +340,11 @@ M.movePlayer = function(x, y, p, skipMirror) {
             M.controlLock = true;
             setTimeout(function () {
                 M.movePlayer(x, y, p, skipMirror);
-                PS.audioPlay("fx_squink");
+                PS.audioPlay("fx_boop");
+                M.controlLock = false;
             }, 100);
+        } else {
+            M.controlLock = false;
         }
     }
 
@@ -373,7 +404,8 @@ Called once after engine is initialized but before event-polling begins.
 var finalize = function( system, options ) {
     PS.statusColor(0xFFFFFF);
     PS.statusText("Mirrors");
-    PS.audioLoad("./mirrorsbg.mp3", {'loop': true, 'autoplay': true});
+    PS.audioPlay("mirrorsbg",
+        {loop: true, volume: 0.5, fileTypes: ["mp3"], path: "https://drmgames.github.io/mirrors/"});
 
     PS.timerStart(5, function() {
         // Redraw map
@@ -386,6 +418,25 @@ var finalize = function( system, options ) {
         //PS.color(M.target.x, M.target.y, 0xFFC0CB);
         PS.color(M.target.x, M.target.y, 0x777777);
         // PS.radius(M.player.x, M.player.y, 50);
+
+        // If both are at goal, move to next lvl
+        if(M.tdone && M.pdone) {
+            M.tdone = false;
+            M.pdone = false;
+            PS.audioPlay("fx_coin2");
+
+            if ( db && PS.dbValid( db ) ) {
+                PS.dbEvent( db, "Level complete", M.currentLevel ); // val can be anything
+            }
+
+            if ( !M.levels[M.currentLevel + 1] && db && PS.dbValid( db ) ) {
+                PS.dbEvent( db, "gameover", true );
+                PS.dbSend( db, "bmoriarty", { discard : true } );
+                db = null;
+            }
+            M.loadLevel(++M.currentLevel);
+        }
+
     });
 };
 
