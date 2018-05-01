@@ -7,6 +7,14 @@
 // The "use strict" directive in the following line is important. Don't alter or remove it!
 "use strict";
 
+/**
+ * Copyright 2018 DRM Games
+ * Mikel Matticoli, Regina Reynolds
+ *
+ * Music: Hero Immortal by Trevor Lentz
+ * https://opengameart.org/content/hero-immortal
+ */
+
 // The following comment lines are for JSLint/JSHint. Don't alter or remove them!
 
 /*jslint nomen: true, white: true */
@@ -365,6 +373,7 @@ Called once after engine is initialized but before event-polling begins.
 var finalize = function( system, options ) {
     PS.statusColor(0xFFFFFF);
     PS.statusText("Mirrors");
+    PS.audioLoad("./mirrorsbg.mp3", {'loop': true, 'autoplay': true});
 
     PS.timerStart(5, function() {
         // Redraw map
