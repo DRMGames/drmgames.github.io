@@ -9,7 +9,7 @@
 /*global PS */
 
 //global database variable
-var db="Mirror";
+var db = false; //"Mirror";
 
 // Global M for game props
 var M = {

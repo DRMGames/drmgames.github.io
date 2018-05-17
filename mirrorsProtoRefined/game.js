@@ -13,8 +13,8 @@
 /*global PS */
 
 //global database variable (Game name in production only)
-var db= window.location.href.indexOf("localhost") < 0 && window.location.href.indexOf("file") < 0
-    ? "Mirror" : false;
+var db= false;// window.location.href.indexOf("localhost") < 0 && window.location.href.indexOf("file") < 0
+//     ? "Mirror" : false;
 
 // Global M for game props
 var M = {
