@@ -445,9 +445,10 @@ PS.init = function(system, option) {
     PS.statusColor(0x0800FD);
 
     if(M.DEBUG) {
-        PS.debug("Debug mode on. Disable for production.");
+        // PS.debug("Debug mode on. Disable for production.");
     } else {
-        PS.debug = function(){};
+	// Deprecated in PS3.3
+        //PS.debug = function(){};
     }
 
     PS.gridSize(16, 16);
